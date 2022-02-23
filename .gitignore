@@ -2,3 +2,4 @@
 jupyter/env/*
 jupyter/conda_startup.txt
 
+jupyter/model.pkl
