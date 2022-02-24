@@ -8,7 +8,7 @@
 <body>
 <h3>Year Prediction Form</h3>
 
-# BUG - Doesn't display popularity when more than one artist is credited
+<!--BUG - Doesn't display properly when more than one artist is credited-->
 <div>
     <form action="/result" method="POST" id="song_form">
         <label for="song_select">Pick a song!</label>
@@ -23,69 +23,6 @@
 </div>
 <br><br>
 
-<h3> {{ rand_songs }}</h3>
-<br><br>
-
-<div>
-    <form action="/result" method="POST" id="manual_form">
-      <label for="acousticness">Acousticness</label>
-      <input type="text" id="acousticness" name="acousticness" value="0.5">
-      <br>
-
-      <label for="danceability">Danceability</label>
-      <input type="text" id="danceability" name="danceability" value="0.5">
-      <br>
-
-      <label for="duration_ms">Duration (ms)</label>
-      <input type="text" id="duration_ms" name="duration_ms" value="150000">
-      <br>
-
-      <label for="energy">Energy</label>
-      <input type="text" id="energy" name="energy" value="0.5">
-      <br>
-
-      <label for="explicit">Explicit?</label>
-      <input type="text" id="explicit" name="explicit" value="0">
-      <br>
-
-      <label for="instrumentalness">Instrumentalness</label>
-      <input type="text" id="instrumentalness" name="instrumentalness" value="0.5">
-      <br>
-
-      <label for="key">Key</label>
-      <input type="text" id="key" name="key" value="1">
-      <br>
-
-      <label for="liveness">Liveness</label>
-      <input type="text" id="liveness" name="liveness" value="0.5">
-      <br>
-
-      <label for="loudness">Loudness</label>
-      <input type="text" id="loudness" name="loudness" value="0.5">
-      <br>
-
-      <label for="mode">Mode</label>
-      <input type="text" id="mode" name="mode" value="1">
-      <br>
-
-      <label for="popularity">Popularity</label>
-      <input type="text" id="popularity" name="popularity" value="1">
-      <br>
-
-      <label for="speechiness">Speechiness</label>
-      <input type="text" id="speechiness" name="speechiness" value="0.5">
-      <br>
-
-      <label for="tempo">Tempo</label>
-      <input type="text" id="tempo" name="tempo" value="120.0">
-      <br>
-
-      <label for="valence">Valence</label>
-      <input type="text" id="valence" name="valence" value="0.5">
-      <br>
-
-    <input type="submit" value="Submit">
-  </form>
 </div>
 </body>
 </html>

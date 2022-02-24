@@ -42,22 +42,21 @@ def ValuePredictor(to_predict_list):
 @app.route('/result', methods=['POST'])
 def result():
     if request.method == 'POST':
+        to_predict_list = request.form.to_dict()
+        to_predict_list = ast.literal_eval(to_predict_list.get('song_select'))
+        result = ValuePredictor(to_predict_list)
 
-        if request.form.to_dict().get('song_select'):
-            to_predict_list = request.form.to_dict()
-            to_predict_list = ast.literal_eval(to_predict_list.get('song_select'))
-            result = ValuePredictor(to_predict_list)
-        else:
-            to_predict_list = request.form.to_dict()
-            to_predict_list = list(to_predict_list.values())
-            # to_predict_list = list(map(int, to_predict_list))
-            result = ValuePredictor(to_predict_list)
+        Tv = int(to_predict_list[15]) - 1921
+        Ov = int(result) - 1921
+        percent_accurate = 100 - abs(((Tv - Ov) / Tv) * 100)
 
-        if int(result) <= 1929:
-            prediction = 'Roaring 20s! - ' + str(int(result))
-        else:
-            prediction = 'A different era! - ' + str(int(result))
-        return render_template("result.html", prediction=prediction, to_predict_list=to_predict_list)
+        prediction = 'Prediction - ' + str(int(result))
+        actual = 'Actual - ' + str(int(to_predict_list[15]))
+        accuracy = 'Percent accuracy - ' + str(percent_accurate)[:5] + "%"
+        songartist = to_predict_list[18] + " - " + to_predict_list[16]
+
+        return render_template("result.html", to_predict_list=to_predict_list, prediction=prediction,
+                               actual=actual, accuracy=accuracy, songartist=songartist)
 
 
 if __name__ == "__main__":
