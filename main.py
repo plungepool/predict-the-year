@@ -1,3 +1,4 @@
+import random
 from pyexpat import model
 
 from flask import Flask, request, render_template
@@ -15,8 +16,9 @@ app = Flask(__name__)
 # @ signifies a decorator - way to wrap a function and modify its behavior
 @app.route('/')
 def index():
-    return render_template("index.html")
-
+    song_list = 'jupyter/test_data.csv'
+    rand_songs = getRandomSongs(song_list)
+    return render_template("index.html", rand_songs=rand_songs)
 
 def ValuePredictor(to_predict_list):
     to_predict = np.array(to_predict_list).reshape(1, 14)
@@ -24,6 +26,19 @@ def ValuePredictor(to_predict_list):
     result = loaded_model.predict(to_predict)
     return result[0]
 
+def getRandomSongs(song_list):
+    file = open(song_list, 'r', encoding="utf-8")
+    rand_songs = []
+    # for i in range(1, 5):
+    random.seed()
+    song_id = random.randrange(3, 137206, 4) #68599 #random.randrange(3, 68604, 2)
+    index = 3
+    for row in file:
+        if index == song_id:
+            rand_songs.append(list(row.split(",")))
+            rand_songs.append(index)
+        index += 2
+    return rand_songs
 
 @app.route('/result', methods=['POST'])
 def result():
