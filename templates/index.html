@@ -13,9 +13,9 @@
     <form action="/result" method="POST" id="song_form">
         <label for="song_select">Pick a song!</label>
         <select id="song_select" name="song_select">
-            <option value="['0.994','0.379','282133','0.0135','0','0.901','8','0.0763','-28.454','1','0','0.0462','83.972','0.0767']">schumann</option>
-            <option value="['0.000633','0.788','266067','0.857','0','0.0884','10','0.214','-13.538','1','41','0.0322','126.726','0.93']">donna summer</option>
-            <option value="['0.0354','0.466','324640','0.838','1','7.31E-05','11','0.34','-6.258','1','42','0.248','99.816','0.513']">limp bizkit</option>
+            {% for s in rand_songs %}
+	            <OPTION value="{{ s }}">{{ s[18] }} " - " {{ s[16] }}</option>
+            {% endfor %}
         </select>
     <br>
         <input type="submit" value="Submit">

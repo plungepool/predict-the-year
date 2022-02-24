@@ -27,17 +27,16 @@ def ValuePredictor(to_predict_list):
     return result[0]
 
 def getRandomSongs(song_list):
-    file = open(song_list, 'r', encoding="utf-8")
     rand_songs = []
-    # for i in range(1, 5):
-    random.seed()
-    song_id = random.randrange(3, 137206, 4) #68599 #random.randrange(3, 68604, 2)
-    index = 3
-    for row in file:
-        if index == song_id:
-            rand_songs.append(list(row.split(",")))
-            rand_songs.append(index)
-        index += 2
+    for i in range(5):
+        file = open(song_list, 'r', encoding="utf-8")
+        random.seed()
+        song_id = random.randrange(3, 137206, 4)
+        index = 3
+        for row in file:
+            if index == song_id:
+                rand_songs.append(list(row.split(",")))#rand_songs.append(list(row.split(","))[17][1])
+            index += 2
     return rand_songs
 
 @app.route('/result', methods=['POST'])
