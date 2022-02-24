@@ -1,13 +1,12 @@
-import random
-from pyexpat import model
-
 from flask import Flask, request, render_template
-import os
-import pandas as pd
 import numpy as np
 import pickle
-import sklearn
 import ast
+import random
+from pyexpat import model
+import os
+import pandas as pd
+import sklearn
 
 app = Flask(__name__)
 
@@ -20,12 +19,6 @@ def index():
     rand_songs = getRandomSongs(song_list)
     return render_template("index.html", rand_songs=rand_songs)
 
-def ValuePredictor(to_predict_list):
-    to_predict = np.array(to_predict_list).reshape(1, 14)
-    loaded_model = pickle.load(open("jupyter/model.pkl", "rb"))
-    result = loaded_model.predict(to_predict)
-    return result[0]
-
 def getRandomSongs(song_list):
     rand_songs = []
     for i in range(5):
@@ -35,9 +28,16 @@ def getRandomSongs(song_list):
         index = 3
         for row in file:
             if index == song_id:
-                rand_songs.append(list(row.split(",")))#rand_songs.append(list(row.split(","))[17][1])
+                rand_songs.append(list(row.split(",")))
             index += 2
     return rand_songs
+
+def ValuePredictor(to_predict_list):
+    to_predict = np.array(to_predict_list[1:15]).reshape(1, 14)
+    loaded_model = pickle.load(open("jupyter/model.pkl", "rb"))
+    result = loaded_model.predict(to_predict)
+    return result[0]
+
 
 @app.route('/result', methods=['POST'])
 def result():
