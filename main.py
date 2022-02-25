@@ -1,12 +1,14 @@
-from flask import Flask, request, render_template
 import numpy as np
 import pickle
 import ast
 import random
-from pyexpat import model
-import os
+
 import pandas as pd
-import sklearn
+import plotly
+import plotly.graph_objects as go
+import json
+
+from flask import Flask, request, render_template
 
 app = Flask(__name__)
 
@@ -18,6 +20,7 @@ def index():
     song_list = 'jupyter/test_data.csv'
     rand_songs = getRandomSongs(song_list)
     return render_template("index.html", rand_songs=rand_songs)
+
 
 def getRandomSongs(song_list):
     rand_songs = []
@@ -31,6 +34,7 @@ def getRandomSongs(song_list):
                 rand_songs.append(list(row.split(",")))
             index += 2
     return rand_songs
+
 
 def ValuePredictor(to_predict_list):
     to_predict = np.array(to_predict_list[1:15]).reshape(1, 14)
@@ -57,6 +61,28 @@ def result():
 
         return render_template("result.html", to_predict_list=to_predict_list, prediction=prediction,
                                actual=actual, accuracy=accuracy, songartist=songartist)
+
+
+@app.route('/sample_page', methods=['GET', 'POST'])
+def home():
+    data = pd.read_csv("jupyter/test_data.csv")
+    # import chart as JSON Object
+    chart_from_python = my_plot(data, "liveness")
+    # pass the JSON Chart object
+    # into the front end
+    return render_template("sample_page.html", chart_for_html=chart_from_python)
+
+
+def my_plot(data, plot_var):
+    data_plot = go.Scatter(x=list(range(data.shape[0])), y=data[plot_var], line=dict(color="#CE285E", width=2))
+    layout = go.Layout(title=dict(text="This is a Line Chart of Variable" + " " + str(plot_var), x=0.5),
+                       xaxis_title="Record Number", yaxis_title="Values"
+                       )
+    fig = go.Figure(data=data_plot, layout=layout)
+    # This is conversion step...
+    fig_json = fig.to_json()
+    graphJSON = json.dumps(fig_json, cls=plotly.utils.PlotlyJSONEncoder)
+    return graphJSON
 
 
 if __name__ == "__main__":
