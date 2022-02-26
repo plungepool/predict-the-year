@@ -1,0 +1,38 @@
+<!--Add the Plotly Script Scource in html head tag-->
+<head>
+<script src="https://cdn.plot.ly/plotly-latest.min.js" ></script>
+</head>
+
+<!--This is HTML and JS Combo to render the chart in the front-end.-->
+<div class="container" id="tempochart" style="margin:0 auto;align-items: center; justify-content: center; ">
+<script type="text/javascript">
+var graphs;
+var graphs = {{ tempo_year_chart | safe }};
+var graphs=JSON.parse(graphs);
+// console.log()
+var config ={displayModeBar: false,showTips: false,responsive:true};
+Plotly.plot('tempochart',graphs.data,graphs.layout,config);
+</script>
+</div>
+
+<div class="container" id="loudnesschart" style="margin:0 auto;align-items: center; justify-content: center; ">
+<script type="text/javascript">
+var graphs;
+var graphs = {{ loudness_year_chart | safe }};
+var graphs=JSON.parse(graphs);
+// console.log()
+var config ={displayModeBar: false,showTips: false,responsive:true};
+Plotly.plot('loudnesschart',graphs.data,graphs.layout,config);
+</script>
+</div>
+
+<div class="container" id="acousticnesschart" style="margin:0 auto;align-items: center; justify-content: center; ">
+<script type="text/javascript">
+var graphs;
+var graphs = {{ acousticness_year_chart | safe }};
+var graphs=JSON.parse(graphs);
+// console.log()
+var config ={displayModeBar: false,showTips: false,responsive:true};
+Plotly.plot('acousticnesschart',graphs.data,graphs.layout,config);
+</script>
+</div>

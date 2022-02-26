@@ -5,7 +5,7 @@ import random
 
 import pandas as pd
 import plotly
-import plotly.graph_objects as go
+import plotly.express as px
 import json
 
 from flask import Flask, request, render_template
@@ -63,23 +63,77 @@ def result():
                                actual=actual, accuracy=accuracy, songartist=songartist)
 
 
-@app.route('/sample_page', methods=['GET', 'POST'])
+@app.route('/graphs', methods=['GET', 'POST'])
 def home():
     data = pd.read_csv("jupyter/test_data.csv")
     # import chart as JSON Object
-    chart_from_python = my_plot(data, "liveness")
-    # pass the JSON Chart object
-    # into the front end
-    return render_template("sample_page.html", chart_for_html=chart_from_python)
+    tempo_year_chart = tempo_by_year(data)
+    loudness_year_chart = loudness_by_year(data)
+    acousticness_year_chart = acousticness_by_year(data)
+    # Pass to front end
+    return render_template("graphs.html", tempo_year_chart=tempo_year_chart,
+                           loudness_year_chart=loudness_year_chart,
+                           acousticness_year_chart=acousticness_year_chart)
 
 
-def my_plot(data, plot_var):
-    data_plot = go.Scatter(x=list(range(data.shape[0])), y=data[plot_var], line=dict(color="#CE285E", width=2))
-    layout = go.Layout(title=dict(text="This is a Line Chart of Variable" + " " + str(plot_var), x=0.5),
-                       xaxis_title="Record Number", yaxis_title="Values"
-                       )
-    fig = go.Figure(data=data_plot, layout=layout)
-    # This is conversion step...
+def tempo_by_year(data):
+    avg_tempos = []
+    years = range(1921, 2021)
+    for i in years:
+        file = pd.read_csv("jupyter/test_data.csv")
+        year = file.loc[file['year'] == i]
+        tempos = year['tempo']
+        tempos = pd.DataFrame(tempos)
+        avg_tempos.append(float(pd.DataFrame.mean(tempos)))
+    fig = px.line(x=years, y=avg_tempos[0:100], title='Average tempo by year',
+                  labels={
+                      "x": "Year",
+                      "y": "Average Tempo"
+                  }
+                  )
+    # Convert to JSON object
+    fig_json = fig.to_json()
+    graphJSON = json.dumps(fig_json, cls=plotly.utils.PlotlyJSONEncoder)
+    return graphJSON
+
+
+def loudness_by_year(data):
+    avg_loudness = []
+    years = range(1921, 2021)
+    for i in years:
+        file = pd.read_csv("jupyter/test_data.csv")
+        year = file.loc[file['year'] == i]
+        loudnesses = year['loudness']
+        loudnesses = pd.DataFrame(loudnesses)
+        avg_loudness.append(float(pd.DataFrame.mean(loudnesses)))
+    fig = px.line(x=years, y=avg_loudness[0:100], title='Average loudness by year',
+                  labels={
+                      "x": "Year",
+                      "y": "Average Loudness"
+                  }
+                  )
+    # Convert to JSON object
+    fig_json = fig.to_json()
+    graphJSON = json.dumps(fig_json, cls=plotly.utils.PlotlyJSONEncoder)
+    return graphJSON
+
+
+def acousticness_by_year(data):
+    avg_acousticness = []
+    years = range(1921, 2021)
+    for i in years:
+        file = pd.read_csv("jupyter/test_data.csv")
+        year = file.loc[file['year'] == i]
+        acousticnesses = year['acousticness']
+        acousticnesses = pd.DataFrame(acousticnesses)
+        avg_acousticness.append(float(pd.DataFrame.mean(acousticnesses)))
+    fig = px.line(x=years, y=avg_acousticness[0:100], title='Average acousticness by year',
+                  labels={
+                      "x": "Year",
+                      "y": "Average Acousticness"
+                  }
+                  )
+    # Convert to JSON object
     fig_json = fig.to_json()
     graphJSON = json.dumps(fig_json, cls=plotly.utils.PlotlyJSONEncoder)
     return graphJSON
