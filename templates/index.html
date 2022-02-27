@@ -1,28 +1,72 @@
 <!DOCTYPE html>
 <html lang="en">
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+<script src="https://cdn.plot.ly/plotly-latest.min.js" ></script>
 <head>
     <meta charset="UTF-8">
     <title>PREDICT THE YEAR!</title>
 </head>
 <body>
-<h3>Year Prediction Form</h3>
 
-<!--BUG - Doesn't display properly when more than one artist is credited-->
-<div>
-    <form action="/result" method="POST" id="song_form">
-        <label for="song_select">Pick a song!</label>
-        <select id="song_select" name="song_select">
-            {% for s in rand_songs %}
-	            <OPTION value="{{ s }}">{{ s[18] }} " - " {{ s[16] }}</option>
-            {% endfor %}
-        </select>
-    <br>
-        <input type="submit" value="Submit">
-    </form>
-</div>
-<br><br>
+<h1>PREDICT THE YEAR!</h1>
 
+<div class='parent'>
+    <div class='child'>
+    <h3>Select a song from the list to see a prediction:</h3>
+        <p>Refresh the page for a new set of songs!</p>
+        <div>
+            <form action="/result" method="POST" id="song_form">
+                <label for="song_select">Pick a song!</label>
+                <select id="song_select" name="song_select">
+                    {% for s in rand_songs %}
+                    <OPTION value="{{ s }}">{{ s[16] }} " - " {{ s[17] }}</option>
+                    {% endfor %}
+                </select>
+                <br><br>
+                <input type="submit" value="Submit">
+            </form>
+        </div>
+    </div>
+    <div class='child'>
+        <div class="container" id="tempochart" style="margin:0 auto;align-items: center; justify-content: center; ">
+            <script type="text/javascript">
+                var graphs;
+                var graphs = {{ tempo_year_chart | safe }};
+                var graphs=JSON.parse(graphs);
+                // console.log()
+                var config ={displayModeBar: false,showTips: false,responsive:true};
+                Plotly.plot('tempochart',graphs.data,graphs.layout,config);
+            </script>
+        </div>
+    </div>
 </div>
+
+<div class='parent'>
+    <div class='child'>
+        <div class="container" id="loudnesschart" style="margin:0 auto;align-items: center; justify-content: center; ">
+            <script type="text/javascript">
+                var graphs;
+                var graphs = {{ loudness_year_chart | safe }};
+                var graphs=JSON.parse(graphs);
+                // console.log()
+                var config ={displayModeBar: false,showTips: false,responsive:true};
+                Plotly.plot('loudnesschart',graphs.data,graphs.layout,config);
+            </script>
+        </div>
+    </div>
+    <div class='child'>
+        <div class="container" id="acousticnesschart" style="margin:0 auto;align-items: center; justify-content: center; ">
+            <script type="text/javascript">
+                var graphs;
+                var graphs = {{ acousticness_year_chart | safe }};
+                var graphs=JSON.parse(graphs);
+                // console.log()
+                var config ={displayModeBar: false,showTips: false,responsive:true};
+                Plotly.plot('acousticnesschart',graphs.data,graphs.layout,config);
+            </script>
+        </div>
+    </div>
+</div>
+
 </body>
 </html>

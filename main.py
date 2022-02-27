@@ -7,14 +7,13 @@ import plotly
 import plotly.express as px
 import json
 import datetime as dt
-from dash import html, dcc
 
 from flask import Flask, request, render_template
 from flask_caching import Cache
 
 config = {
-    "DEBUG": True,          # some Flask specific configs
-    "CACHE_TYPE": "SimpleCache",  # Flask-Caching related configs
+    "DEBUG": False,
+    "CACHE_TYPE": "SimpleCache",
     "CACHE_DEFAULT_TIMEOUT": 300
 }
 
@@ -24,13 +23,20 @@ cache = Cache(app)
 
 TIMEOUT = 60
 
-# Ties a page on your website to a function
-# @ signifies a decorator - way to wrap a function and modify its behavior
+
 @app.route('/')
 def index():
-    song_list = 'jupyter/test_data.csv'
-    rand_songs = getRandomSongs(song_list)
-    return render_template("index.html", rand_songs=rand_songs)
+    test_song_list = 'jupyter/test_data.csv'
+    rand_songs = getRandomSongs(test_song_list)
+    data = dataframe()
+    # import charts as JSON Object
+    tempo_year_chart = tempo_by_year(data)
+    loudness_year_chart = loudness_by_year(data)
+    acousticness_year_chart = acousticness_by_year(data)
+    return render_template("index.html", rand_songs=rand_songs,
+                           tempo_year_chart=tempo_year_chart,
+                           loudness_year_chart=loudness_year_chart,
+                           acousticness_year_chart=acousticness_year_chart)
 
 
 def getRandomSongs(song_list):
@@ -68,7 +74,7 @@ def result():
         prediction = 'Prediction - ' + str(int(result))
         actual = 'Actual - ' + str(int(to_predict_list[15]))
         accuracy = 'Percent accuracy - ' + str(percent_accurate)[:5] + "%"
-        songartist = to_predict_list[18] + " - " + to_predict_list[16]
+        songartist = to_predict_list[16] + " - " + to_predict_list[17]
 
         return render_template("result.html", to_predict_list=to_predict_list, prediction=prediction,
                                actual=actual, accuracy=accuracy, songartist=songartist)
@@ -76,13 +82,12 @@ def result():
 
 @cache.memoize(timeout=TIMEOUT)
 def query_data():
-    # This could be an expensive data querying step
-    np.random.seed(0)  # no-display
+    np.random.seed(0)
     df = pd.DataFrame(
-        pd.read_csv("jupyter/test_data.csv")
+        pd.read_csv("jupyter/data_SpotifyTop100PerYear.csv")
     )
     now = dt.datetime.now()
-    df['time'] = [now - dt.timedelta(seconds=5*i) for i in range(34301)]
+    df['time'] = [now - dt.timedelta(seconds=5*i) for i in range(169909)]
     return df.to_json(date_format='iso', orient='split')
 
 
@@ -93,7 +98,7 @@ def dataframe():
 @app.route('/graphs', methods=['GET', 'POST'])
 def home():
     data = dataframe()
-    # import chart as JSON Object
+    # import charts as JSON Object
     tempo_year_chart = tempo_by_year(data)
     loudness_year_chart = loudness_by_year(data)
     acousticness_year_chart = acousticness_by_year(data)
@@ -112,12 +117,13 @@ def tempo_by_year(data):
         tempos = year['tempo']
         tempos = pd.DataFrame(tempos)
         avg_tempos.append(float(pd.DataFrame.mean(tempos)))
-    fig = px.line(x=years, y=avg_tempos[0:100], title='Average tempo by year',
+    fig = px.line(x=years, y=avg_tempos[0:100], width=600, height=400,
                   labels={
                       "x": "Year",
                       "y": "Average Tempo (BPM)"
                   }
                   )
+    fig.update_layout(title_text='Average tempo by year', title_x=0.5)
     # Convert to JSON object
     fig_json = fig.to_json()
     graphJSON = json.dumps(fig_json, cls=plotly.utils.PlotlyJSONEncoder)
@@ -133,12 +139,13 @@ def loudness_by_year(data):
         loudnesses = year['loudness']
         loudnesses = pd.DataFrame(loudnesses)
         avg_loudness.append(float(pd.DataFrame.mean(loudnesses)))
-    fig = px.line(x=years, y=avg_loudness[0:100], width=800, height=400, title='Average loudness by year',
+    fig = px.line(x=years, y=avg_loudness[0:100], width=600, height=400,
                   labels={
                       "x": "Year",
                       "y": "Average Loudness (LUFS)"
                   }
                   )
+    fig.update_layout(title_text='Average loudness by year', title_x=0.5)
     # Convert to JSON object
     fig_json = fig.to_json()
     graphJSON = json.dumps(fig_json, cls=plotly.utils.PlotlyJSONEncoder)
@@ -154,12 +161,13 @@ def acousticness_by_year(data):
         acousticnesses = year['acousticness']
         acousticnesses = pd.DataFrame(acousticnesses)
         avg_acousticness.append(float(pd.DataFrame.mean(acousticnesses)))
-    fig = px.line(x=years, y=avg_acousticness[0:100], title='Average acousticness by year',
+    fig = px.line(x=years, y=avg_acousticness[0:100], width=600, height=400,
                   labels={
                       "x": "Year",
                       "y": "Average Acousticness"
                   }
                   )
+    fig.update_layout(title_text='Average acousticness by year', title_x=0.5)
     # Convert to JSON object
     fig_json = fig.to_json()
     graphJSON = json.dumps(fig_json, cls=plotly.utils.PlotlyJSONEncoder)

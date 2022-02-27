@@ -3,7 +3,23 @@ body {
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
+p {
+    text-align: center;
+}
+
 h1 {
     color: black;
-    alignment: center;
+    text-align: center;
+}
+
+h3 {
+    color: black;
+}
+
+.parent {
+  text-align: center;
+}
+.child {
+  display: inline-block;
+  vertical-align: middle;
 }
